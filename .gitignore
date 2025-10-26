@@ -1,0 +1,41 @@
+# 1) .gitignore sano para no volver a incluir node_modules ni builds
+cat > .gitignore << 'EOF'
+# Dependencies
+node_modules/
+
+# Expo / RN / Builds
+.expo/
+.expo-shared/
+dist/
+web-build/
+expo-env.d.ts
+ios/
+android/
+build/
+.gradle/
+.metro/
+.metro-health-check*
+.cache/
+tmp/
+temp/
+
+# Env
+.env
+.env.*.local
+
+# TypeScript
+*.tsbuildinfo
+
+# Logs
+npm-debug.*
+yarn-debug.*
+yarn-error.*
+pnpm-debug.log*
+*.log
+
+# OS / Editors
+.DS_Store
+.vscode/
+.idea/
+EOF
+
