@@ -21,6 +21,8 @@ temp/
 
 # Env
 .env
+.env.development
+.env.production
 .env.*.local
 
 # TypeScript

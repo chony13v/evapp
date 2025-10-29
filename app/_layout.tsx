@@ -1,24 +1,32 @@
-import { DarkTheme, DefaultTheme, ThemeProvider } from '@react-navigation/native';
-import { SplashScreen, Stack } from 'expo-router';
+import {
+  DarkTheme,
+  DefaultTheme,
+  ThemeProvider,
+} from '@react-navigation/native';
+import { useFonts } from 'expo-font';
+import { Stack } from 'expo-router';
+import * as SplashScreen from 'expo-splash-screen';
 import { useEffect } from 'react';
-import { StatusBar } from 'expo-status-bar';
-import { useFonts } from 'expo-font'
 import 'react-native-reanimated';
 
 import { useColorScheme } from '@/presentation/theme/hooks/use-color-scheme';
+import { GestureHandlerRootView } from 'react-native-gesture-handler';
+import { useThemeColor } from '@/presentation/theme/hooks/use-theme-color';
 
-export const unstable_settings = {
-  anchor: '(tabs)',
-};
+// Prevent the splash screen from auto-hiding before asset loading is complete.
+SplashScreen.preventAutoHideAsync();
 
 export default function RootLayout() {
   const colorScheme = useColorScheme();
+  const backgroundColor = useThemeColor({}, 'background');
+
   const [loaded] = useFonts({
-    KanitRegular: require('@/assets/fonts/Kanit-Regular.ttf'),
-    KanitBold: require('@/assets/fonts/Kanit-Bold.ttf'),
-    KanitThin: require('@/assets/fonts/Kanit-Thin.ttf')
+    // SpaceMono: require('../assets/fonts/SpaceMono-Regular.ttf'),
+    KanitRegular: require('../assets/fonts/Kanit-Regular.ttf'),
+    KanitBold: require('../assets/fonts/Kanit-Bold.ttf'),
+    KanitThin: require('../assets/fonts/Kanit-Thin.ttf'),
   });
-  
+
   useEffect(() => {
     if (loaded) {
       SplashScreen.hideAsync();
@@ -30,16 +38,19 @@ export default function RootLayout() {
   }
 
   return (
-    <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
-      <Stack
-      screenOptions={{
-        headerShown: false,
-      }}
-      >
-        
-      </Stack>
-      <StatusBar style="auto" />
-    </ThemeProvider>
+    <GestureHandlerRootView
+      style={{ backgroundColor: backgroundColor, flex: 1 }}
+    >
+      <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
+        <Stack
+          screenOptions={{
+            headerShown: false,
+          }}
+        >
+          {/* <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+        <Stack.Screen name="+not-found" /> */}
+        </Stack>
+      </ThemeProvider>
+    </GestureHandlerRootView>
   );
 }
-
