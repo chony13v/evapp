@@ -30,22 +30,29 @@ const RegisterScreen = () => {
   });
 
   const onRegister = async () => {
-    const { fullName, email, password } = form;
+    const fullName = form.fullName.trim();
+    const email = form.email.trim();
+    const password = form.password;
 
     if (fullName.length === 0 || email.length === 0 || password.length === 0) {
+      Alert.alert('Formulario incompleto', 'Todos los campos son obligatorios');
       return;
     }
 
     setIsPosting(true);
-    const wasSuccessful = await register(fullName, email, password);
-    setIsPosting(false);
 
-    if (wasSuccessful) {
-      router.replace('/');
-      return;
+    try {
+      const { ok, message } = await register(fullName, email, password);
+
+      if (ok) {
+        router.replace('/');
+        return;
+      }
+
+      Alert.alert('Error', message ?? 'No se pudo crear la cuenta, intenta nuevamente');
+    } finally {
+      setIsPosting(false);
     }
-
-    Alert.alert('Error', 'No se pudo crear la cuenta, intenta nuevamente');
   };
 
   return (

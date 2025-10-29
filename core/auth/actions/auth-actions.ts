@@ -1,3 +1,4 @@
+import { isAxiosError } from 'axios';
 import { productsApi } from "../api/productsApi";
 import { User } from "../interface/user";
 
@@ -33,7 +34,7 @@ const returnUserToken = (
   };
 };
 
-export const authLogin = async (email: string, password: string) => {
+const authLogin = async (email: string, password: string) => {
   email = email.toLowerCase();
 
   try {
@@ -50,9 +51,9 @@ export const authLogin = async (email: string, password: string) => {
   }
 };
 
-export const authCheckStatus = async () => {
+const authCheckStatus = async () => {
   try {
-    const { data } = await productsApi.get<AuthResponse>("/auth/check-status");
+    const { data } = await productsApi.get<AuthResponse>('/auth/check-status');
 
     return returnUserToken(data);
   } catch (error) {
@@ -61,7 +62,8 @@ export const authCheckStatus = async () => {
   }
 };
 
-export const authRegister = async (
+
+const authRegister = async (
   fullName: string,
   email: string,
   password: string
@@ -69,15 +71,39 @@ export const authRegister = async (
   email = email.toLowerCase();
 
   try {
-    const { data } = await productsApi.post<AuthResponse>("/auth/register", {
+    const { data } = await productsApi.post<AuthResponse>('/auth/register', {
       fullName,
+      name: fullName,
       email,
       password,
     });
 
     return returnUserToken(data);
-  } catch (error) {
-    console.log(error);
-    return null;
+  } catch (error: unknown) {
+    if (isAxiosError(error)) {
+      const payload = error.response?.data as
+        | { message?: unknown; error?: unknown; errors?: unknown }
+        | string
+        | undefined;
+
+      const apiMessage =
+        typeof payload === 'string'
+          ? payload
+          : payload?.message ?? payload?.error ?? payload?.errors;
+
+      const message = Array.isArray(apiMessage)
+        ? apiMessage.join('\n')
+        : typeof apiMessage === 'string'
+        ? apiMessage
+        : 'No se pudo crear la cuenta, intenta nuevamente';
+
+      throw new Error(message);
+    }
+
+    throw error instanceof Error
+      ? error
+      : new Error('No se pudo crear la cuenta, intenta nuevamente');
   }
 };
+
+export { authLogin, authCheckStatus, authRegister };
