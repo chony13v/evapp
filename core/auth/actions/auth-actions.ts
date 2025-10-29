@@ -1,5 +1,5 @@
-import { productsApi } from '../api/productsApi';
-import { User } from '../interface/user';
+import { productsApi } from "../api/productsApi";
+import { User } from "../interface/user";
 
 export interface AuthResponse {
   id: string;
@@ -37,7 +37,7 @@ export const authLogin = async (email: string, password: string) => {
   email = email.toLowerCase();
 
   try {
-    const { data } = await productsApi.post<AuthResponse>('/auth/login', {
+    const { data } = await productsApi.post<AuthResponse>("/auth/login", {
       email,
       password,
     });
@@ -52,7 +52,7 @@ export const authLogin = async (email: string, password: string) => {
 
 export const authCheckStatus = async () => {
   try {
-    const { data } = await productsApi.get<AuthResponse>('/auth/check-status');
+    const { data } = await productsApi.get<AuthResponse>("/auth/check-status");
 
     return returnUserToken(data);
   } catch (error) {
@@ -61,4 +61,23 @@ export const authCheckStatus = async () => {
   }
 };
 
-// TODO: Tarea: Hacer el register
+export const authRegister = async (
+  fullName: string,
+  email: string,
+  password: string
+) => {
+  email = email.toLowerCase();
+
+  try {
+    const { data } = await productsApi.post<AuthResponse>("/auth/register", {
+      fullName,
+      email,
+      password,
+    });
+
+    return returnUserToken(data);
+  } catch (error) {
+    console.log(error);
+    return null;
+  }
+};
