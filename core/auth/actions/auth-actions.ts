@@ -73,7 +73,6 @@ const authRegister = async (
   try {
     const { data } = await productsApi.post<AuthResponse>('/auth/register', {
       fullName,
-      name: fullName,
       email,
       password,
     });
