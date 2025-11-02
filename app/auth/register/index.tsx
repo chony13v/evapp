@@ -45,7 +45,7 @@ const RegisterScreen = () => {
       const { ok, message } = await register(fullName, email, password);
 
       if (ok) {
-        router.replace('/');
+        router.replace('/auth/login');
         return;
       }
 

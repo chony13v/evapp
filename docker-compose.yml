@@ -1,0 +1,45 @@
+version: '3'
+
+services:
+  app:
+    image: klerith/flutter-backend-teslo-shop:latest
+    container_name: evapp_app
+    restart: always
+    depends_on:
+      db:
+        condition: service_healthy
+    ports:
+      - "${PORT}:${PORT}"
+    environment:
+      APP_VERSION: ${APP_VERSION}
+      STAGE: ${STAGE}
+      DB_PASSWORD: ${DB_PASSWORD}
+      DB_NAME: ${DB_NAME}
+      DB_HOST: db           
+      DB_PORT: 5432          
+      DB_USERNAME: ${DB_USERNAME}
+      PORT: ${PORT}
+      HOST_API: ${HOST_API}
+      JWT_SECRET: ${JWT_SECRET}
+
+  db:
+    image: postgres:16.1
+    container_name: evapp_postgres   
+    restart: always
+    ports:
+      - "5433:5432"                  
+    environment:
+      POSTGRES_USER: ${DB_USERNAME}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_DB: ${DB_NAME}
+    volumes:
+      - postgres-db:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USERNAME} -d ${DB_NAME}"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+volumes:
+  postgres-db:
+    external: false
